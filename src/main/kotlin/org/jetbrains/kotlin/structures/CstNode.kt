@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.structures
 
-abstract class CstNode: AbstractNode() {
-    abstract val chars: String
-    abstract val children: ArrayList<CstNode>
+import java.util.ArrayList
+
+class CstNode: AbstractNode() {
+    var chars: String = ""
+    override val children: ArrayList<CstNode> = arrayListOf()
 }

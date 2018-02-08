@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.structures
 
 abstract class AbstractNode {
-    abstract val type: String
+    val type: String = ""
+    abstract val children: ArrayList<out AbstractNode>
 }
