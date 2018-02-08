@@ -8,8 +8,8 @@ import org.jetbrains.kotlin.structures.CstNode
 
 fun main(args : Array<String>) {
     val parser = ArgParser(args)
-    val path by parser.storing("-p", "--path", help = "path to files for n-gram generation")
-    val ngramGenerator = NgramGenerator<CstNode>()
+    val path by parser.storing("-p", "--path", help="path to files for n-gram generation")
+    val ngramGenerator = NgramGenerator<CstNode>(window=3)
 
     JsonFilesReader<CstNode>(path, "json", object: TypeReference<CstNode>() {}).run {
         ngramGenerator.generate(it)
