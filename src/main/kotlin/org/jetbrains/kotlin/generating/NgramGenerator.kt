@@ -2,107 +2,105 @@ package org.jetbrains.kotlin.generating
 
 import org.jetbrains.kotlin.structures.AbstractNode
 import java.util.*
+import kotlin.math.min
 
-typealias Gram = MutableList<String>
-typealias Grams = MutableList<Gram>
+typealias Grams = MutableList<String>
+typealias GramAsNode = List<AbstractNode>
+typealias GramsAsNode = MutableList<GramAsNode>
 typealias Nodes = MutableList<AbstractNode>
+typealias NodesSet = MutableList<Nodes>
 
-class NgramGenerator(private val n: Int, private val d: Int) {
-    private val ngrams: MutableList<Grams> = mutableListOf()
+class NgramGenerator(private val d: Int) {
+    private val n = 3
+    private val ngrams: GramsAsNode = mutableListOf()
 
-    fun buildNgrams(path: Nodes): Grams {
-        val ngrams: Grams = mutableListOf()
+    companion object {
+        fun gramsStringify(gramsAsNode: List<GramAsNode>): Grams {
+            val grams: Grams = mutableListOf()
 
-        val base = mutableListOf<String>()
+            gramsAsNode.map {
+                grams.add(it.joinToString(":"))
+            }
+
+            return grams
+        }
+    }
+
+    fun buildNgrams(path: GramAsNode) {
         path.withIndex().map {
-            val baseNode = it.value.type
-            for (j in 1..n) {
-                val currentNode = path[it.index + j]
-                for (k in j..n) {
-
+            val baseNode = it.value
+            val firstOffset = it.index + 1
+            for (i in firstOffset..min(firstOffset + d, path.size - 1)) {
+                val secondOffset = i + 1
+                ngrams.add(listOf(baseNode, path[i]))
+                for (j in secondOffset..min(secondOffset + d, path.size - 1)) {
+                    ngrams.add(listOf(baseNode, path[i], path[j]))
                 }
             }
         }
-
-        return mutableListOf(base)
     }
 
-    fun buildNgramsByPaths(paths: MutableList<Nodes>): Grams {
-        val ngrams: Grams = mutableListOf()
-        paths.map { ngrams.addAll(buildNgrams(it)) }
-        return ngrams
+    fun buildNgramsByPaths(paths: GramsAsNode) {
+        paths.map { buildNgrams(it) }
     }
 
-    private fun findChildrenWithLimit(path: Stack<AbstractNode>, sourceNode: AbstractNode, found: MutableList<Nodes>, limit: Int, alreadyEarlierVisitedNodes: Int, alreadyVisitedNodes: Int = 0) {
+    private fun findChildrenWithLimit(path: Stack<AbstractNode>, sourceNode: AbstractNode, found: NodesSet, limit: Int, alreadyEarlierVisitedNodes: Int, alreadyVisitedNodes: Int = 0) {
         if (limit == 0) {
             return
         }
         val node = path.last()
-        if (node.children.size != 0) {
-            for (child in node.children) {
-                if (child == sourceNode) {
-                    continue
-                }
-                path.push(child)
-                findChildrenWithLimit(path, sourceNode, found, limit - 1, alreadyEarlierVisitedNodes, alreadyVisitedNodes + 1)
-                path.pop()
+        node.children.map map@{
+            if (it == sourceNode) {
+                return@map
             }
-        } else {
+            path.push(it)
+            findChildrenWithLimit(path, sourceNode, found, limit - 1, alreadyEarlierVisitedNodes, alreadyVisitedNodes + 1)
+            path.pop()
+        }
+        if (node.children.size == 0) {
             found.add(path.toMutableList())
         }
     }
 
-    fun findNgramOnPath(node: AbstractNode, parentNodes: Nodes) {
+    fun findNgramOnPath(node: AbstractNode, parentNodes: GramAsNode) {
         val maxChildrenWalkLimit = n * d - 1
         val nodesOnPath: Nodes = mutableListOf()
-        val ngrams: Grams = mutableListOf()
-        println("For: ${node.type}")
 
         parentNodes.reversed().withIndex().forEach {
-            val prevNodeOnPath = if (nodesOnPath.size != 0) nodesOnPath.last() else node
+            val prevNodeOnPath = if (nodesOnPath.isNotEmpty()) nodesOnPath.last() else node
             val alreadyVisitedNodes = it.index
             val walkLimit = maxChildrenWalkLimit - alreadyVisitedNodes
-            val paths: MutableList<Nodes> = mutableListOf()
-            val currentCombineNodes: MutableList<Nodes> = mutableListOf()
+            val paths: NodesSet = mutableListOf()
             val path: Stack<AbstractNode> = Stack()
+            val currentCombineNodes: GramsAsNode = mutableListOf()
 
             path.push(it.value)
             findChildrenWithLimit(path, prevNodeOnPath, paths, walkLimit, alreadyVisitedNodes + 1)
 
             paths.forEach {
-                currentCombineNodes.add((nodesOnPath + it).toMutableList())
+                currentCombineNodes.add(nodesOnPath + it)
             }
 
             nodesOnPath.add(it.value)
-
-            ngrams.addAll(buildNgramsByPaths(currentCombineNodes))
-
-            println("Parent: ${it.value}")
-            println(currentCombineNodes)
-            println("----------------------")
+            buildNgramsByPaths(currentCombineNodes)
         }
-        println(ngrams)
-        println("======================")
     }
 
     private fun dfw(node: AbstractNode, parentNodes: Nodes) {
+        ngrams.add(listOf(node))
         parentNodes.add(node)
         if (parentNodes.size > n * d) {
             parentNodes.removeAt(0)
         }
-        if (node.children.size != 0) {
-            for ((index, child) in node.children.withIndex()) {
-                findNgramOnPath(child, parentNodes)
-                dfw(child, parentNodes)
-            }
+        node.children.map {
+            findNgramOnPath(it, parentNodes)
+            dfw(it, parentNodes)
         }
         parentNodes.remove(node)
     }
 
-    fun generate(tree: AbstractNode) {
-        val parentNodes: Nodes = mutableListOf()
-        dfw(tree, parentNodes)
-        println(ngrams)
-        println("==================")
+    fun generate(tree: AbstractNode): List<GramAsNode> {
+        dfw(tree, mutableListOf())
+        return ngrams.distinct()
     }
 }
