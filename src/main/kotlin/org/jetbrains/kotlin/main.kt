@@ -12,13 +12,17 @@ fun main(args : Array<String>) {
     val parser = ArgParser(args)
     val path by parser.storing("-p", "--path", help="path to files for n-gram generation")
     val ngramGenerator = NgramGenerator(d=3)
+    var allUniqueGrams: Set<String> = mutableSetOf()
+    val gramsByFiles: MutableMap<String, Grams> = mutableMapOf()
+    val cstNodeReference = object: TypeReference<CstNode>() {}
 
-    JsonFilesReader<CstNode>(path, "json", object: TypeReference<CstNode>() {}).run {
-        val grams: List<GramAsNode> = ngramGenerator.generate(it)
+    JsonFilesReader<CstNode>(path, "json", cstNodeReference).run { content: CstNode, filename: String ->
+        val grams: List<GramAsNode> = ngramGenerator.generate(content)
         val gramsAsString: Grams = NgramGenerator.gramsStringify(grams)
-        println(gramsAsString)
-        println("--------------------")
 
-//        FileWriter(ngrams)
+        allUniqueGrams = allUniqueGrams.union(gramsAsString)
+        gramsByFiles[filename] = gramsAsString
     }
+
+    println(gramsByFiles)
 }

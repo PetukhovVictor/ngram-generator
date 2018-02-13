@@ -12,15 +12,16 @@ class JsonFilesReader<T>(
         return jacksonObjectMapper().readValue(file.readText(), entityType)
     }
 
-    private fun walkDirectory(callback: (T) -> Unit) {
-        File(dirPath).walkTopDown().forEach {
+    private fun walkDirectory(callback: (T, String) -> Unit) {
+        val dir = File(dirPath)
+        dir.walkTopDown().forEach {
             if (it.isFile && it.extension == filesExt) {
-                callback(readFile(it))
+                callback(readFile(it), it.relativeTo(dir).name)
             }
         }
     }
 
-    fun run(callback: (T) -> Unit) {
-        walkDirectory { callback(it) }
+    fun run(callback: (T, String) -> Unit) {
+        walkDirectory { content: T, filename: String -> callback(content, filename) }
     }
 }
