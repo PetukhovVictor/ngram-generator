@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.structures
+package org.jetbrains.ngramgenerator.structures
 
 abstract class AbstractNode {
     val type: String = ""

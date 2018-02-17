@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.helpers
+package org.jetbrains.ngramgenerator.helpers
 
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -6,6 +6,10 @@ import java.util.concurrent.TimeUnit
 
 class TimeLogger(private val task_name: String) {
     private val startTime = Date().time
+
+    init {
+        println("$task_name started")
+    }
 
     fun finish(fullFinish: Boolean = false) {
         val time = Date().time - startTime

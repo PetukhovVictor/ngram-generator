@@ -1,13 +1,15 @@
-package org.jetbrains.kotlin.generating
+package org.jetbrains.ngramgenerator.generating
 
-import org.jetbrains.kotlin.structures.AbstractNode
+import org.jetbrains.ngramgenerator.structures.AbstractNode
+import java.util.*
 
 typealias Gram = List<String>
 typealias Grams = MutableSet<Gram>
+typealias GramsStatistic = MutableMap<String, Int>
 typealias Nodes = MutableList<AbstractNode>
 
 class NgramGenerator(private val d: Int) {
-    val allNgrams: Grams = mutableSetOf()
+    val allNgrams: GramsStatistic = mutableMapOf()
     private val n = 3
     private val ngrams: Grams = mutableSetOf()
 
@@ -72,7 +74,16 @@ class NgramGenerator(private val d: Int) {
     fun generate(tree: AbstractNode): Grams {
         ngrams.clear()
         dfw(tree, mutableListOf())
-        allNgrams.addAll(ngrams)
+
+        ngrams.forEach {
+            val gramStr = it.joinToString(":")
+            if (allNgrams.contains(gramStr)) {
+                allNgrams[gramStr] = allNgrams[gramStr]!!.inc()
+            } else {
+                allNgrams[gramStr] = 1
+            }
+        }
+
         return ngrams
     }
 }

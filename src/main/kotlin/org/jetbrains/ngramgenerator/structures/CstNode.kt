@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.structures
+package org.jetbrains.ngramgenerator.structures
 
 import java.util.ArrayList
 

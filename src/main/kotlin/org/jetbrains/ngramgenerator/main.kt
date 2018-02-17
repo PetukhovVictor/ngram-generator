@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin
+package org.jetbrains.ngramgenerator
 
 import com.xenomachina.argparser.ArgParser
 

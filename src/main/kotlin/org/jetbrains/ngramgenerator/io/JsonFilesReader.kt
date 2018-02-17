@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.io
+package org.jetbrains.ngramgenerator.io
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -8,7 +8,7 @@ class JsonFilesReader<T>(
         private val dirPath: String,
         private val filesExt: String,
         private val entityType: TypeReference<*>) {
-    private fun readFile(file: File): T {
+    private fun readFile(file: File): ArrayList<T> {
         return jacksonObjectMapper().readValue(file.readText(), entityType)
     }
 
@@ -16,7 +16,7 @@ class JsonFilesReader<T>(
         val dir = File(dirPath)
         dir.walkTopDown().forEach {
             if (it.isFile && it.extension == filesExt) {
-                callback(readFile(it), it)
+                callback(readFile(it)[0], it)
             }
         }
     }
