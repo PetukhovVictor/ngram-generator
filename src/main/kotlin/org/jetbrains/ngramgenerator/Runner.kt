@@ -11,10 +11,11 @@ import java.io.File
 
 class Runner {
     companion object {
-        fun run(cstsPath: String, cstVectorsPath: String, allNgramsFilePath: String) {
+        fun run(cstsPath: String, cstVectorsPath: String) {
             val ngramGenerator = NgramGenerator(d = 3)
             val cstNodeReference = object: TypeReference<ArrayList<CstNode>>() {}
             val timeLogger = TimeLogger(task_name = "N-gram extraction")
+            val allNgramsFilePath = "./all_ngrams.json"
 
             JsonFilesReader<CstNode>(cstsPath, "json", cstNodeReference).run { content: CstNode, file: File ->
                 val grams: Grams = ngramGenerator.generate(content)

@@ -3,7 +3,7 @@ package org.jetbrains.ngramgenerator.generating
 import org.jetbrains.ngramgenerator.structures.AbstractNode
 import java.util.*
 
-typealias Gram = List<String>
+typealias Gram = String
 typealias Grams = MutableSet<Gram>
 typealias GramsStatistic = MutableMap<String, Int>
 typealias Nodes = MutableList<AbstractNode>
@@ -13,18 +13,22 @@ class NgramGenerator(private val d: Int) {
     private val n = 3
     private val ngrams: Grams = mutableSetOf()
 
+    private fun ngramAdd(gram: List<String>) {
+        ngrams.add(gram.joinToString(":"))
+    }
+
     private fun buildNgramsByPath(path: LinkedHashSet<AbstractNode>, firstNodeOnPath: AbstractNode) {
         val lastNodeOnPath = path.last()
         val distanceBetweenFirstAndLast = path.size - 1
         if (distanceBetweenFirstAndLast <= d) {
-            ngrams.add(listOf(firstNodeOnPath.type, distanceBetweenFirstAndLast.toString(), lastNodeOnPath.type)) // add bigram
+            ngramAdd(listOf(firstNodeOnPath.type, distanceBetweenFirstAndLast.toString(), lastNodeOnPath.type)) // add bigram
         }
         path.withIndex().forEach {
             if (it.value != lastNodeOnPath) {
                 val distanceToFirst = it.index
                 val distanceToLast = path.size - 2 - it.index
                 if (distanceToFirst <= d && distanceToLast <= d) {
-                    ngrams.add(listOf(firstNodeOnPath.type, distanceToFirst.toString(), it.value.type, distanceToLast.toString(), lastNodeOnPath.type)) // add 3-gram
+                    ngramAdd(listOf(firstNodeOnPath.type, distanceToFirst.toString(), it.value.type, distanceToLast.toString(), lastNodeOnPath.type)) // add 3-gram
                 }
             }
         }
@@ -58,7 +62,7 @@ class NgramGenerator(private val d: Int) {
     }
 
     private fun dfw(node: AbstractNode, path: Nodes) {
-        ngrams.add(listOf(node.type)) // add unigram
+        ngramAdd(listOf(node.type)) // add unigram
         buildNgrams(node, path) // build bigram and 3-gram
 
         path.add(node)
@@ -76,11 +80,10 @@ class NgramGenerator(private val d: Int) {
         dfw(tree, mutableListOf())
 
         ngrams.forEach {
-            val gramStr = it.joinToString(":")
-            if (allNgrams.contains(gramStr)) {
-                allNgrams[gramStr] = allNgrams[gramStr]!!.inc()
+            if (allNgrams.contains(it)) {
+                allNgrams[it] = allNgrams[it]!!.inc()
             } else {
-                allNgrams[gramStr] = 1
+                allNgrams[it] = 1
             }
         }
 
