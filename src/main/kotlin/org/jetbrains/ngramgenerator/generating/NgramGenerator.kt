@@ -3,18 +3,22 @@ package org.jetbrains.ngramgenerator.generating
 import org.jetbrains.ngramgenerator.structures.AbstractNode
 import java.util.*
 
-typealias Gram = String
-typealias Grams = MutableSet<Gram>
-typealias GramsStatistic = MutableMap<String, Int>
+typealias Grams = MutableMap<String, Int>
 typealias Nodes = MutableList<AbstractNode>
 
 class NgramGenerator(private val d: Int) {
-    val allNgrams: GramsStatistic = mutableMapOf()
+    val allNgrams: Grams = mutableMapOf()
     private val n = 3
-    private val ngrams: Grams = mutableSetOf()
+    private val ngrams: Grams = mutableMapOf()
 
     private fun ngramAdd(gram: List<String>) {
-        ngrams.add(gram.joinToString(":"))
+        val gramStr = gram.joinToString(":")
+
+        if (ngrams.contains(gramStr)) {
+            ngrams[gramStr] = ngrams[gramStr]!!.inc()
+        } else {
+            ngrams[gramStr] = 1
+        }
     }
 
     private fun buildNgramsByPath(path: LinkedHashSet<AbstractNode>, firstNodeOnPath: AbstractNode) {
@@ -79,11 +83,11 @@ class NgramGenerator(private val d: Int) {
         ngrams.clear()
         dfw(tree, mutableListOf())
 
-        ngrams.forEach {
-            if (allNgrams.contains(it)) {
-                allNgrams[it] = allNgrams[it]!!.inc()
+        ngrams.map {
+            if (allNgrams.contains(it.key)) {
+                allNgrams[it.key] = allNgrams[it.key] !!+ it.value
             } else {
-                allNgrams[it] = 1
+                allNgrams[it.key] = it.value
             }
         }
 
