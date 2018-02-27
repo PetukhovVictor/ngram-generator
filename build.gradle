@@ -10,7 +10,7 @@ buildscript {
 }
 
 group 'org.jetbrains'
-version '1.0-SNAPSHOT'
+version '0.1'
 
 apply plugin: 'kotlin'
 
@@ -32,11 +32,6 @@ jar {
     manifest {
         attributes 'Main-Class': 'org.jetbrains.ngramgenerator.MainKt'
     }
-
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    exclude ('META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA')
-
-    zip64 true
 }
 
 compileKotlin {
