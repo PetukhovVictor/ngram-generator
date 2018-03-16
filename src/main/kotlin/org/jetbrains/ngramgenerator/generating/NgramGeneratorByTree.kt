@@ -21,11 +21,6 @@ class NgramGeneratorByTree(private val d: Int): NgramGenerator(d) {
                 }
                 visitedNodes.add(it)
                 if (visitedNodes.size <= n * d + n - 1) {
-                    if (visitedNodes.size == 2) {
-                        println("${node.type} : ${visitedNodes.first().type} : ${visitedNodes.last().type}")
-                    } else {
-                        println("${node.type} : ${visitedNodes.first().type}")
-                    }
                     buildNgramsByPath(visitedNodes, node)
                 }
             } else if (!visitedAreaStarted) {
