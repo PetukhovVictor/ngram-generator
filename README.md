@@ -5,6 +5,10 @@ N-gram generation by tree or list
 
 The program allows for a set of files with trees or lists to generate n-grams (unigrams, bigrams and 3-grams).
 
+Also you can specify max distance between neighboring nodes (by default is 0). Max distance is max number of nodes, which can stand between n-grams nodes.
+
+Max distance is specified [here](https://github.com/PetukhovVictor/ngram-generator/blob/master/src/main/kotlin/org/jetbrains/ngramgenerator/Runner.kt#L22) (for generating by tree) and [here](https://github.com/PetukhovVictor/ngram-generator/blob/master/src/main/kotlin/org/jetbrains/ngramgenerator/Runner.kt#L41) (for generating by list).
+
 ### N-grams generation by tree
 
 Bulding of n-grams on the tree occurs via depth-first search and storing the path of the walk. On the basis of the stored path, a set of n-grams is built at each node in which it contained.
