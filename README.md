@@ -13,7 +13,7 @@ Max distance is specified [here](https://github.com/PetukhovVictor/ngram-generat
 
 Bulding of n-grams on the tree occurs via depth-first search and storing the path of the walk. On the basis of the stored path, a set of n-grams is built at each node in which it contained.
 
-Example of n-grams generation by tree:
+Example of n-grams generation by tree (without intermediate nodes - max distance = 0):
 
 ![Tree n-grams generation](https://github.com/PetukhovVictor/ngram-generator/raw/master/images/tree_ngrams.png)
 
@@ -128,7 +128,7 @@ Example:
 
 N-gramms are generated from the list by simple walk (forEach) and storing of history walk (one and two previous elements).
 
-Example of n-grams generation by list:
+Example of n-grams generation by list (without intermediate nodes - max distance = 0):
 
 ![Tree n-grams generation](https://github.com/PetukhovVictor/ngram-generator/raw/master/images/list_ngrams.png)
 
