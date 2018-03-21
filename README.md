@@ -10,7 +10,10 @@ The program allows for a set of files with trees or lists to generate n-grams (u
 Bulding of n-grams on the tree occurs via depth-first search and storing the path of the walk. On the basis of the stored path, a set of n-grams is built at each node in which it contained.
 
 Example of n-grams generation by tree:
+
 ![Tree n-grams generation](https://github.com/PetukhovVictor/ngram-generator/raw/master/images/tree-ngrams.png)
+
+Green color is 3-gram, orange is bigram and purple is unigrams.
 
 It is Kotlin PSI tree (or CST - concrete syntax tree).
 
@@ -122,7 +125,10 @@ Example:
 N-gramms are generated from the list by simple walk (forEach) and storing of history walk (one and two previous elements).
 
 Example of n-grams generation by list:
+
 ![Tree n-grams generation](https://github.com/PetukhovVictor/ngram-generator/raw/master/images/list-ngrams.png)
+
+Green color is 3-gram, orange is bigram and purple is unigrams.
 
 It is JVM inctruction list (parsed bytecode).
 
