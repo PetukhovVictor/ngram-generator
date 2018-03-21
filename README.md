@@ -11,7 +11,7 @@ Bulding of n-grams on the tree occurs via depth-first search and storing the pat
 
 Example of n-grams generation by tree:
 
-![Tree n-grams generation](https://github.com/PetukhovVictor/ngram-generator/raw/master/images/tree-ngrams.png)
+![Tree n-grams generation](https://github.com/PetukhovVictor/ngram-generator/raw/master/images/tree_ngrams.png)
 
 Green color is 3-gram, orange is bigram and purple is unigrams.
 
@@ -126,7 +126,7 @@ N-gramms are generated from the list by simple walk (forEach) and storing of his
 
 Example of n-grams generation by list:
 
-![Tree n-grams generation](https://github.com/PetukhovVictor/ngram-generator/raw/master/images/list-ngrams.png)
+![Tree n-grams generation](https://github.com/PetukhovVictor/ngram-generator/raw/master/images/list_ngrams.png)
 
 Green color is 3-gram, orange is bigram and purple is unigrams.
 
