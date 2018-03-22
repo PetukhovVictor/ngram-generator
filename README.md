@@ -167,5 +167,5 @@ To run program you must run `main` function in `main.kt`, not forgetting to set 
 
 Also you can run jar file (you can download from the [release assets](https://github.com/PetukhovVictor/ngram-generator/releases)):
 ```
-java -jar ./ngram-generator-0.1.1.jar -i ./trees -o ./ngrams --tree
+java -jar ./ngram-generator-0.1.1.jar -i ./trees -o ./trees_factorized --tree
 ```
