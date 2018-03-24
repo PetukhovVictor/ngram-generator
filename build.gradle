@@ -10,7 +10,7 @@ buildscript {
 }
 
 group 'org.jetbrains'
-version '0.1'
+version '0.1.2'
 
 apply plugin: 'kotlin'
 

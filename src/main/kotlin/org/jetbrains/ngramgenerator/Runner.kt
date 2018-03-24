@@ -11,33 +11,52 @@ import org.jetbrains.ngramgenerator.io.FileWriter
 import org.jetbrains.ngramgenerator.io.JsonFilesReader
 import org.jetbrains.ngramgenerator.structures.Tree
 import java.io.File
+import java.nio.file.Files
 
 enum class StructureType {
     TREE, LIST
 }
 
+object FilesCounter {
+    var counter = 0
+}
+
 object Runner {
-    private const val allNgramsFilePath = "./all_ngrams.json"
+    private const val ALL_NGRAMS_FILE_PATH = "./all_ngrams.json"
+    private const val TOTAL_FILES = 880593
 
     private fun writeGeneratedNgrams(ngramGenerator: NgramGenerator) {
         val writeTimeLogger = TimeLogger(task_name = "N-grams write")
-        FileWriter.write(allNgramsFilePath, ngramGenerator.allNgrams)
+        FileWriter.write(ALL_NGRAMS_FILE_PATH, ngramGenerator.allNgrams)
         writeTimeLogger.finish()
+    }
+
+    private fun checkAlreadyExist(file: File, dirPath: String, targetDirPath: String): Boolean {
+        val relativePath = file.relativeTo(File(dirPath))
+        val outputPath = File("$targetDirPath/$relativePath")
+        val fileExist = Files.exists(outputPath.toPath())
+
+        if (fileExist) {
+            FilesCounter.counter++
+            println("SKIP: PSI ALREADY FACTORIZED (${FilesCounter.counter} out of $TOTAL_FILES)")
+        }
+
+        return fileExist
     }
 
     private fun generateByTree(ngramGenerator: NgramGeneratorByTree, treesPath: String, treeVectorsPath: String) {
         val treeReference = object: TypeReference<ArrayList<Tree>>() {}
-        var counter = 0
-        val total = 880593
+        val additionalFileCheck = { file: File -> checkAlreadyExist(file, treesPath, treeVectorsPath) }
 
-        JsonFilesReader<ArrayList<Tree>>(treesPath, ".kt.json", treeReference).run { content: ArrayList<Tree>, file: File ->
+        JsonFilesReader<ArrayList<Tree>>(treesPath, ".kt.json", treeReference).run(additionalFileCheck) { content: ArrayList<Tree>, file: File ->
+            FilesCounter.counter++
             if (content.size == 0) {
+                println("SKIP: EMPTY PSI FILE (${FilesCounter.counter} out of $TOTAL_FILES)")
                 return@run
             }
             val grams: Grams = ngramGenerator.generate(content[0])
             FileWriter.write(file, treesPath, treeVectorsPath, grams)
-            println("($counter out of $total) $file: ${grams.size} n-grams extracted")
-            counter++
+            println("(${FilesCounter.counter} out of $TOTAL_FILES) $file: ${grams.size} n-grams extracted")
         }
     }
 
