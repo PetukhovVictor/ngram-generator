@@ -27,7 +27,7 @@ Tree must be an array, which contains elements with two fields: `type` and `chil
 Field `type` is used by algorithm to generating n-grams.
 
 Example:
-```
+```json
 [
    {
       "type":"FILE",
@@ -143,7 +143,7 @@ List must be grouped list (array of arrays) of strings. Groups do not participat
 Such a format was chosen for the initial task — to generate n-grams by a set of JVM-instructions grouped by methods.
 
 Example:
-```
+```json
 {
 	"\u003cclinit\u003e": ["iconst_1","anewarray","dup","iconst_0","new","dup","ldc","invokestatic","ldc","ldc","invokespecial","invokestatic","checkcast","aastore","putstatic","new","dup","aconst_null","invokespecial","putstatic","return"],
 	"\u003cinit\u003e": ["aload_0","invokespecial","aload_0","new","dup","aload_0","invokespecial","checkcast","invokestatic","putfield","return"],
